@@ -5,16 +5,21 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Habilita validação automática dos DTOs
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true, // remove propriedades que não existem no DTO
-      forbidNonWhitelisted: true, // lança erro se receber campos extras
-      transform: true, // transforma payloads nos tipos dos DTOs
+      whitelist: true, // remove campos extras
+      forbidNonWhitelisted: true, // lança erro se campos extras
+      transform: true, // transforma payloads
     }),
   );
+
+  // Habilita CORS simples para dev e prod
+  app.enableCors({
+    origin: ['http://localhost:3000', 'https://seu-frontend.com'],
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+  });
 
   await app.listen(3000);
 }
 bootstrap();
-
