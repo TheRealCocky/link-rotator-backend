@@ -21,6 +21,7 @@ model Link {
   alternativeUrls String[]
   weights         Int[]    @default([])
   accessCount     Int      @default(0)
+  clicksPerUrl    Int[]    @default([])
 
   @@map("links")
 }

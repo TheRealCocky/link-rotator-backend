@@ -1,4 +1,12 @@
-import { IsString, IsArray, IsOptional, IsInt, Min } from 'class-validator';
+import {
+  IsString,
+  IsArray,
+  IsOptional,
+  IsInt,
+  Min,
+  ValidateNested,
+} from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class CreateLinkDTO {
   @IsString()
@@ -37,9 +45,15 @@ export class LinkDTO {
 
   @IsInt()
   accessCount: number;
+
+  @IsArray()
+  @IsInt({ each: true })
+  clicksPerUrl: number[];
 }
 
 export class GetAllLinksDTO {
   @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => LinkDTO)
   links: LinkDTO[];
 }

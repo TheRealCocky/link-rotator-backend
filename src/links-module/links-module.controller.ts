@@ -1,7 +1,16 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { LinksModuleService } from './links-module.service';
 import { CreateLinkDTO } from './dtos/links';
+import type { Response } from 'express';
 
 @Controller('links-module')
 export class LinksModuleController {
@@ -14,16 +23,19 @@ export class LinksModuleController {
   }
 
   @Get(':originalUrl/rotate')
-  async rotate(
-    @Param('originalUrl') originalUrl: string,
-  ): Promise<{ redirectUrl: string }> {
+  async rotate(@Param('originalUrl') originalUrl: string, @Res() res: Response) {
     const url = await this.linkesService.rotateLink(originalUrl);
-    return { redirectUrl: url };
+    return res.redirect(url); // 👈 redireciona o user
   }
 
   @Get()
   @UseGuards(AuthGuard('jwt'))
   getAll() {
     return this.linkesService.getAllLinks();
+  }
+
+  @Get(':originalUrl/metrics')
+  async metrics(@Param('originalUrl') originalUrl: string) {
+    return this.linkesService.getMetrics(originalUrl);
   }
 }
